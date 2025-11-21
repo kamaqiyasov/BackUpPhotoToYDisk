@@ -1,3 +1,4 @@
+from typing import Optional
 import requests
 import math
 
@@ -11,28 +12,26 @@ class CatImageWithText:
             raise ValueError("Текст не может быть пустым")
 
         cat_image = self._get_cat_with_text(text)
-        self.id = cat_image['id']
-        self.url = cat_image['url']
+        if cat_image is not None:
+            self.id = cat_image['id']
+            self.url = cat_image['url']
         self.text = text
         image_info = self._get_image_info()
         if image_info:
             self.size = image_info['size']
             self.file_name = image_info['file_name']
         
-    def _get_cat_with_text(self, text: str) -> dict:
+    def _get_cat_with_text(self, text: str) -> Optional[dict]:
         """Метод получения фотографии с текстом"""
         if not text:
-            return False
-        
+            return None
         try:
             response = requests.get(f'{self.BASE_URL}/cat/says/{text}', params = {'json': True})   
-            if response.status_code != 200:
-                return False
+            if response.status_code == 200:
+                return response.json()
         except Exception as e:
-            return e
+            return None
         
-        return response.json()
-
     def _get_image_info(self):
         """Метод получения информации о картинке"""
         response = requests.get(f'{self.BASE_URL}/cat/{self.id}')   

@@ -30,7 +30,8 @@ def main():
 
             with open('log.json', 'w', encoding='utf-8') as file:
                 json.dump(data, file, indent=4)
-
-
+        else:
+            print("Ошибка при загрузке")
+            
 if __name__ == "__main__":
     main()
